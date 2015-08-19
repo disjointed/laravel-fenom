@@ -1,0 +1,34 @@
+{
+    "name": "neva/laravel-fenom",
+    "description": "Fenom Template Engine for Laravel 5",
+    "keywords": ["laravel", "fenom", "template", "view"],
+    "authors": [
+        {
+            "name": "Krystian Panek",
+            "email": "punky@neva.zone"
+        }
+    ],
+    "license": "MIT",
+    "require": {
+        "php": ">=5.4.0",
+        "fenom/fenom": "2.*",
+        "illuminate/support": "5.*",
+        "illuminate/view": "5.*",
+        "illuminate/config": "5.*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "*"
+    },
+
+    "autoload": {
+        "psr-0": {
+            "Neva\\Fenom\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "files": [
+            "tests/TestCase.php"
+        ]
+    },
+    "minimum-stability": "stable"
+}
