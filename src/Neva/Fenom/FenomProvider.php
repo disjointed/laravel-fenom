@@ -7,51 +7,89 @@ use Fenom\ProviderInterface;
 class FenomProvider implements ProviderInterface
 {
     /**
-     * @var string
-     */
-    protected $path;
-
-    /**
      * @var Provider
      */
     protected $provider;
 
     /**
-     * @param string $path
+     * @var string
      */
-    public function __construct($path)
+    protected $extension;
+
+    /**
+     * @param string $extension
+     */
+    public function __construct($extension)
     {
-        $this->path = $path;
-        $this->provider = new Provider($path);
+        $this->extension = $extension;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function templateExists($tpl)
     {
-        return $this->provider->templateExists($this->parsePath($tpl));
+        $path = $this->getTemplatePath($tpl);
+
+        return file_exists($path) || \View::exists($path);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getSource($tpl, &$time)
     {
-        return $this->provider->getSource($this->parsePath($tpl), $time);
+        $path = $this->getTemplatePath($tpl);
+        $time = filemtime($path);
+
+        return file_get_contents($path);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getLastModified($tpl)
     {
-        return $this->provider->getLastModified($this->parsePath($tpl));
+        $path = $this->getTemplatePath($tpl);
+
+        return filemtime($path);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function verify(array $templates)
     {
-        return $this->provider->verify($templates);
+        foreach ($templates as $tpl => $mtime) {
+            $path = $this->getTemplatePath($tpl);
+            if (@filemtime($path) !== $mtime) {
+                return false;
+            }
+
+        }
+
+        return true;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getList()
     {
-        return $this->provider->getList('fenom.php');
+        // TODO use extension to find all templates
+
+        return [];
     }
 
-    protected function parsePath($tpl)
+    /**
+     * @param $tpl
+     *
+     * @return string
+     */
+    protected function getTemplatePath($tpl)
     {
-        return \Str::removePrefix($tpl, $this->path);
+        $tpl = str_replace('#', '::', $tpl);
+
+        return file_exists($tpl) ? $tpl : \View::getFinder()->find($tpl);
     }
 }

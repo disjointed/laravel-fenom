@@ -8,41 +8,38 @@ class FenomServiceProvider extends ServiceProvider
 {
 
     /**
-     * Register the service provider.
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function register()
     {
-        $this->app->singleton('fenom', function () {
-            $provider = new FenomProvider(base_path());
-            $fenom = new Fenom($provider);
-            $fenom->setCompileDir(storage_path() . '/framework/views');
-
-            return $fenom;
-        });
+        // nothing to do
     }
 
     /**
-     * boot process
+     * {@inheritdoc}
      */
     public function boot()
     {
-        \View::addExtension('fenom.php', 'fenom', function () {
-            return new FenomEngine($this->app['fenom']);
+        $extension = config('fenom.extension', 'fenom.php');
+
+        $this->app['view']->addExtension($extension, 'fenom', function () use ($extension) {
+            $provider = new FenomProvider($extension);
+            $fenom = new Fenom($provider);
+            $fenom->setCompileDir(config('fenom.compileDir', storage_path() . '/framework/views'));
+            $fenom->setOptions(config('fenom.options', []));
+
+            return new FenomEngine($fenom);
         });
+
+        $this->publishes([__DIR__ . '/../../config/fenom.php' => config_path('fenom.php')]);
     }
 
     /**
-     * Get the services provided by the provider.
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function provides()
     {
-        return [
-            'fenom',
-        ];
+        return [];
     }
 }
 
