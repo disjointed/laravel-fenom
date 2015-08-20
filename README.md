@@ -15,7 +15,12 @@ php artisan vendor:publish --provider="Neva\Fenom\FenomServiceProvider"
 
 Then edit by yourself: `config/fenom.php`
 
+## Important info
 
+To reference views from another package, use '#' instead of ':' as delimiter. For instance:
 
+```
+{extends 'other_package#some.view'}
+```
 
 
