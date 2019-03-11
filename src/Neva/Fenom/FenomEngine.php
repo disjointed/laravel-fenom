@@ -1,7 +1,7 @@
 <?php namespace Neva\Fenom;
 
 use Fenom;
-use Illuminate\View\Engines\EngineInterface;
+use Illuminate\Contracts\View\Engine as EngineInterface;
 
 class FenomEngine implements EngineInterface
 {
